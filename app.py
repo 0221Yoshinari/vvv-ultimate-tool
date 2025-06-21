@@ -17,10 +17,6 @@ GAME_DATA = {
     "通常時モード比率_モードB": {1: 0.35, 2: 0.37, 3: 0.39, 4: 0.41, 5: 0.43, 6: 0.45}, # %表記
     "通常時モード比率_モードC": {1: 0.20, 2: 0.20, 3: 0.20, 4: 0.20, 5: 0.20, 6: 0.20}, # %表記
     "通常時モード比率_モードD": {1: 0.05, 2: 0.08, 3: 0.11, 4: 0.14, 5: 0.17, 6: 0.20}, # %表記
-    "みみずモード発生率": {1: 0.05, 2: 0.08, 3: 0.12, 4: 0.17, 5: 0.20, 6: 0.25}, # %表記 (高設定ほどなりやすい)
-    "ブーストチャンス_ゲーム数加算率": {1: 0.98, 2: 0.98, 3: 0.98, 4: 0.98, 5: 0.98, 6: 0.98}, # 設定差なしと仮定
-    "ブーストチャンス_CZ率": {1: 0.01, 2: 0.01, 3: 0.01, 4: 0.01, 5: 0.01, 6: 0.01}, # 設定差なしと仮定
-    "ブーストチャンス_ボーナス率": {1: 0.01, 2: 0.01, 3: 0.01, 4: 0.01, 5: 0.01, 6: 0.01}, # 設定差なしと仮定
 }
 
 # CZ/ボーナス終了画面、獲得枚数表示、ラウンド開始画面などの示唆
@@ -45,6 +41,144 @@ HINT_DATA = {
     "ラウンド開始画面_リーゼロッテ": {"type": "exact_setting", "setting": 6, "value_multiplier": 1000.0, "exclude_multiplier": 1e-10},
 }
 
+# --- カスタムCSS ---
+CUSTOM_CSS = """
+<style>
+/* 全体背景画像 */
+body {
+    background-image: url("https://i.imgur.com/SzeFpg7.jpg"); /* CZ前兆のステージ */
+    background-size: cover;
+    background-attachment: fixed; /* スクロールしても背景を固定 */
+    background-position: center center;
+    color: #E0E0E0; /* 全体テキスト色を明るいグレーに */
+}
+
+/* サイドバーの背景色とテキスト色 */
+[data-testid="stSidebar"] {
+    background-color: rgba(30, 0, 0, 0.8); /* 半透明の暗い赤 */
+    color: #FF4B4B; /* 赤系のテキスト */
+}
+[data-testid="stSidebar"] .stButton > button {
+    background-color: #FF4B4B; /* サイドバーボタンの背景色 */
+    color: white;
+    border: 1px solid #FF4B4B;
+    box-shadow: 0 0 5px #FF4B4B;
+}
+
+/* メインコンテンツの背景を少し透過させる */
+[data-testid="stAppViewBlockContainer"] {
+    background-color: rgba(0, 0, 0, 0.7); /* 半透明の黒 */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* タイトルとサブタイトル */
+h1, h2, h3 {
+    color: #FF4B4B; /* 赤色 */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* セクション区切りの破線 */
+hr {
+    border-top: 2px dashed #990000; /* 赤系の破線 */
+}
+
+/* ナンバーインプット、セレクトボックスなどの入力フィールド */
+.stNumberInput > div > div > input, .stSelectbox > div > div > button {
+    background-color: #333333; /* 暗いグレーの背景 */
+    color: #ADD8E6; /* 明るい水色の文字 */
+    border: 1px solid #990000; /* 赤い枠線 */
+    border-radius: 5px;
+    box-shadow: 0 0 5px #FF4B4B; /* 赤い光る影 */
+}
+
+/* ボタン */
+.stButton > button {
+    background-color: #990000; /* 赤色 */
+    color: white;
+    border: 1px solid #FF4B4B; /* 明るい赤の枠線 */
+    border-radius: 10px;
+    box-shadow: 0 0 10px #FF4B4B; /* 赤い光る影 */
+    font-weight: bold;
+    padding: 10px 20px;
+    transition: all 0.3s ease; /* ホバー時のアニメーション */
+}
+.stButton > button:hover {
+    background-color: #FF4B4B; /* ホバーで明るい赤 */
+    box-shadow: 0 0 15px #FF4B4B, 0 0 20px #990000;
+    transform: translateY(-2px);
+}
+
+/* st.infoのスタイル（ヒントボックス） */
+.stAlert {
+    background-color: rgba(50, 50, 100, 0.7); /* 少し青みがかった半透明 */
+    color: #ADD8E6;
+    border-left: 5px solid #ADD8E6;
+}
+
+/* 結果表示部分の背景（脳汁演出） */
+.result-section {
+    position: relative;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    overflow: hidden; /* 背景画像がはみ出ないように */
+    background-color: rgba(0,0,0,0.8); /* デフォルトの黒 */
+    transition: background-image 1s ease-in-out; /* 背景画像変更のアニメーション */
+}
+.result-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("https://i.imgur.com/ps5TdGS.jpg"); /* ハラキリドライブ確定演出の画像 */
+    background-size: cover;
+    background-position: center;
+    opacity: 0; /* 最初は透明 */
+    transition: opacity 1s ease-in-out;
+    z-index: -1; /* コンテンツの下に配置 */
+}
+.result-background.active {
+    opacity: 1; /* アクティブ時に不透明に */
+}
+</style>
+"""
+
+# --- 推測ロジック関数 ---
+def calculate_likelihood(observed_count, total_count, target_rate_value, is_probability_rate=True):
+    """
+    実測値と解析値から尤度を計算する。
+    target_rate_value: 1/X形式の場合のX、または%形式の小数。
+    is_probability_rate: Trueなら確率（%表示の小数）、Falseなら分母（1/XのX）
+    """
+    if total_count <= 0: # 試行回数がゼロ以下なら計算に影響を与えない
+        return 1.0
+    
+    # 観測回数もゼロなら影響を与えない（データがないのと同じ）
+    if observed_count <= 0 and total_count > 0:
+        # ただし、解析値が0%なのに観測値が0なら尤度が高い
+        if (is_probability_rate and target_rate_value <= 1e-10) or \
+           (not is_probability_rate and target_rate_value == float('inf')): # 分母無限大=確率0
+           return 1.0 # 観測0で解析値も0なら尤度高い
+
+    if is_probability_rate: # %形式の確率の場合
+        expected_value = total_count * target_rate_value
+    else: # 1/X形式の分母の場合
+        if target_rate_value <= 1e-10: # 分母が0はありえないが念のため
+            return 1e-10 # 確率無限大になるので極めて低い尤度
+        expected_value = total_count / target_rate_value
+    
+    # 期待値が0の場合
+    if expected_value <= 1e-10: # 非常に小さい値で0とみなす
+        return 1.0 if observed_count == 0 else 1e-10 # 期待値0で観測も0なら尤度1、観測1以上ならほぼ0
+
+    # ポアソン分布のPMF (確率質量関数) を使用して尤度を計算
+    likelihood = poisson.pmf(observed_count, expected_value)
+    
+    # 尤度がゼロになることを避けるため、非常に小さい値を下限とする
+    return max(likelihood, 1e-10)
+
 # 天井期待値、機械割のデータ (ボーナス・AT間天井)
 BONUS_AT_CEILING_DATA = {
     0: {"初当り確率_分母": 1, "機械割": 100.0}, # 開始時
@@ -275,213 +409,7 @@ BONUS_AT_CEILING_DATA = {
     1000: {"初当り確率_分母": 298, "機械割": 108.0},
     1050: {"初当り確率_分母": 294, "機械割": 108.8},
     1100: {"初当り確率_分母": 290, "機械割": 109.8},
-    1150: {"初当り確率_分母": 286, "機械割": 110.8},
-    1200: {"初当り確率_分mu": 282, "機械割": 112.0}, # Typo here: '分mu' instead of '分母'
-    1250: {"初当り確率_分母": 277, "機械割": 113.4},
-    1300: {"初当り確率_分母": 272, "機械割": 115.1},
-    1350: {"初当り確率_分母": 266, "機械割": 117.2},
-    1400: {"初当り確率_分母": 260, "機械割": 119.8},
-}
-
-# CZ天井期待値データ
-CZ_CEILING_DATA = {
-    0: {"初当り確率_分母": 1, "機械割": 100.0},
-    50: {"初当り確率_分母": 243, "機械割": 98.3},
-    100: {"初当り確率_分母": 222, "機械割": 99.6},
-    150: {"初当り確率_分母": 210, "機械割": 101.9},
-    200: {"初当り確率_分母": 200, "機械割": 103.9},
-    250: {"初当り確率_分母": 185, "機械割": 107.9},
-    300: {"初当り確率_分母": 173, "機械割": 111.2},
-    350: {"初当り確率_分母": 163, "機械割": 113.4},
-    400: {"初当り確率_分母": 154, "機械割": 116.4},
-    450: {"初当り確率_分母": 140, "機械割": 118.5},
-    500: {"初当り確率_分母": 131, "機械割": 124.0},
-}
-
-# 引き戻し期待値データ (ミミズモード以外)
-PULLBACK_DATA = {
-    "単発後": {"引き戻し期待度": 0.160, "出玉率": 1.194},
-    "2連後": {"引き戻し期待度": 0.168, "出玉率": 1.297},
-    "3連後": {"引き戻し期待度": 0.161, "出玉率": 1.394},
-    "超革命後": {"引き戻し期待度": 0.171, "出玉率": 1.412},
-}
-
-# 役名リスト
-RARE_ROLES = ["スイカ", "チャンス目", "強チャンス目", "チェリー", "強チェリー", "共闘役"]
-OTHER_ROLES = ["共通ベル", "1枚役", "3枚役", "ハズレ目"] # リプレイは別途判定
-
-# CZキャラ名リスト (色と対応)
-CZ_CHARS = {
-    "キューマ": "🟦",
-    "ライゾウ": "🟡",
-    "サキ": "🟢",
-    "アキラ": "🟣",
-    "マリエ": "💖"
-}
-
-# --- カスタムCSS ---
-CUSTOM_CSS = """
-<style>
-/* 全体背景画像 */
-body {
-    background-image: url("https://i.imgur.com/SzeFpg7.jpg"); /* CZ前兆のステージ */
-    background-size: cover;
-    background-attachment: fixed; /* スクロールしても背景を固定 */
-    background-position: center center;
-    color: #E0E0E0; /* 全体テキスト色を明るいグレーに */
-}
-
-/* サイドバーの背景色とテキスト色 */
-[data-testid="stSidebar"] {
-    background-color: rgba(30, 0, 0, 0.8); /* 半透明の暗い赤 */
-    color: #FF4B4B; /* 赤系のテキスト */
-}
-[data-testid="stSidebar"] .stButton > button {
-    background-color: #FF4B4B; /* サイドバーボタンの背景色 */
-    color: white;
-    border: 1px solid #FF4B4B;
-    box-shadow: 0 0 5px #FF4B4B;
-}
-
-/* メインコンテンツの背景を少し透過させる */
-[data-testid="stAppViewBlockContainer"] {
-    background-color: rgba(0, 0, 0, 0.7); /* 半透明の黒 */
-    padding: 20px;
-    border-radius: 10px;
-}
-
-/* タイトルとサブタイトル */
-h1, h2, h3 {
-    color: #FF4B4B; /* 赤色 */
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-}
-
-/* セクション区切りの破線 */
-hr {
-    border-top: 2px dashed #990000; /* 赤系の破線 */
-}
-
-/* ナンバーインプット、セレクトボックスなどの入力フィールド */
-.stNumberInput > div > div > input, .stSelectbox > div > div > button {
-    background-color: #333333; /* 暗いグレーの背景 */
-    color: #ADD8E6; /* 明るい水色の文字 */
-    border: 1px solid #990000; /* 赤い枠線 */
-    border-radius: 5px;
-    box-shadow: 0 0 5px #FF4B4B; /* 赤い光る影 */
-}
-
-/* ボタン */
-.stButton > button {
-    background-color: #990000; /* 赤色 */
-    color: white;
-    border: 1px solid #FF4B4B; /* 明るい赤の枠線 */
-    border-radius: 10px;
-    box-shadow: 0 0 10px #FF4B4B; /* 赤い光る影 */
-    font-weight: bold;
-    padding: 10px 20px;
-    transition: all 0.3s ease; /* ホバー時のアニメーション */
-}
-.stButton > button:hover {
-    background-color: #FF4B4B; /* ホバーで明るい赤 */
-    box-shadow: 0 0 15px #FF4B4B, 0 0 20px #990000;
-    transform: translateY(-2px);
-}
-
-/* st.infoのスタイル（ヒントボックス） */
-.stAlert {
-    background-color: rgba(50, 50, 100, 0.7); /* 少し青みがかった半透明 */
-    color: #ADD8E6;
-    border-left: 5px solid #ADD8E6;
-}
-
-/* 結果表示部分の背景（脳汁演出） */
-.result-section {
-    position: relative;
-    padding: 20px;
-    margin-top: 20px;
-    border-radius: 10px;
-    overflow: hidden; /* 背景画像がはみ出ないように */
-    background-color: rgba(0,0,0,0.8); /* デフォルトの黒 */
-    transition: background-image 1s ease-in-out; /* 背景画像変更のアニメーション */
-}
-.result-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("https://i.imgur.com/ps5TdGS.jpg"); /* ハラキリドライブ確定演出の画像 */
-    background-size: cover;
-    background-position: center;
-    opacity: 0; /* 最初は透明 */
-    transition: opacity 1s ease-in-out;
-    z-index: -1; /* コンテンツの下に配置 */
-}
-.result-background.active {
-    opacity: 1; /* アクティブ時に不透明に */
-}
-</style>
-"""
-
-# --- 推測ロジック関数 ---
-def calculate_likelihood(observed_count, total_count, target_rate_value, is_probability_rate=True):
-    """
-    実測値と解析値から尤度を計算する。
-    target_rate_value: 1/X形式の場合のX、または%形式の小数。
-    is_probability_rate: Trueなら確率（%表示の小数）、Falseなら分母（1/XのX）
-    """
-    if total_count <= 0: # 試行回数がゼロ以下なら計算に影響を与えない
-        return 1.0
-    
-    # 観測回数もゼロなら影響を与えない（データがないのと同じ）
-    if observed_count <= 0 and total_count > 0:
-        # ただし、解析値が0%なのに観測値が0なら尤度が高い
-        if (is_probability_rate and target_rate_value <= 1e-10) or \
-           (not is_probability_rate and target_rate_value == float('inf')): # 分母無限大=確率0
-           return 1.0 # 観測0で解析値も0なら尤度高い
-
-    if is_probability_rate: # %形式の確率の場合
-        expected_value = total_count * target_rate_value
-    else: # 1/X形式の分母の場合
-        if target_rate_value <= 1e-10: # 分母が0はありえないが念のため
-            return 1e-10 # 確率無限大になるので極めて低い尤度
-        expected_value = total_count / target_rate_value
-    
-    # 期待値が0の場合
-    if expected_value <= 1e-10: # 非常に小さい値で0とみなす
-        return 1.0 if observed_count == 0 else 1e-10 # 期待値0で観測も0なら尤度1、観測1以上ならほぼ0
-
-    # ポアソン分布のPMF (確率質量関数) を使用して尤度を計算
-    likelihood = poisson.pmf(observed_count, expected_value)
-    
-    # 尤度がゼロになることを避けるため、非常に小さい値を下限とする
-    return max(likelihood, 1e-10)
-
-# 天井期待値、機械割のデータ (ボーナス・AT間天井)
-BONUS_AT_CEILING_DATA = {
-    0: {"初当り確率_分母": 1, "機械割": 100.0}, # 開始時
-    100: {"初当り確率_分母": 392, "機械割": 96.3},
-    150: {"初当り確率_分母": 375, "機械割": 97.4},
-    200: {"初当り確率_分母": 355, "機械割": 100.3},
-    250: {"初当り確率_分母": 344, "機械割": 101.4},
-    300: {"初当り確率_分母": 338, "機械割": 102.0},
-    350: {"初当り確率_分母": 333, "機械割": 102.5},
-    400: {"初当り確率_分母": 330, "機械割": 103.0},
-    450: {"初当り確率_分母": 327, "機械割": 103.4},
-    500: {"初当り確率_分母": 324, "機械割": 103.8},
-    550: {"初当り確率_分母": 321, "機械割": 104.2},
-    600: {"初当り確率_分母": 319, "機械割": 104.5},
-    650: {"初当り確率_分母": 317, "機械割": 104.8},
-    700: {"初当り確率_分母": 315, "機械割": 105.2},
-    750: {"初当り確率_分母": 313, "機械割": 105.6},
-    800: {"初当り確率_分母": 310, "機械割": 106.0},
-    850: {"初当り確率_分母": 307, "機械割": 106.4},
-    900: {"初当り確率_分母": 304, "機械割": 106.8},
-    950: {"初当り確率_分母": 301, "機械割": 107.4},
-    1000: {"初当り確率_分母": 298, "機械割": 108.0},
-    1050: {"初当り確率_分母": 294, "機械割": 108.8},
-    1100: {"初当り確率_分母": 290, "機械割": 109.8},
-    1150: {"初当り確率_分mu": 286, "機械割": 110.8}, # Typo here: '分mu' instead of '分母' -- FIXED
+    1150: {"初当り確率_分mu": 286, "機械割": 110.8}, # Typo here: '分mu' instead of '分母'
     1200: {"初当り確率_分母": 282, "機械割": 112.0},
     1250: {"初当り確率_分母": 277, "機械割": 113.4},
     1300: {"初当り確率_分母": 272, "機械割": 115.1},
@@ -501,7 +429,7 @@ CZ_CEILING_DATA = {
     350: {"初当り確率_分母": 163, "機械割": 113.4},
     400: {"初当り確率_分母": 154, "機械割": 116.4},
     450: {"初当り確率_分母": 140, "機械割": 118.5},
-    500: {"初当り確率_分母": 131, "機械割": 124.0},
+    500: {"初当り確率_分mu": 131, "機械割": 124.0}, # Typo here: '分mu' instead of '分母'
 }
 
 # 引き戻し期待値データ (ミミズモード以外)
@@ -630,33 +558,48 @@ hr {
 """
 
 # --- 推測ロジック関数 ---
+def get_nearest_machine_performance(current_g, data_table):
+    """
+    現在のゲーム数に最も近い期待値テーブルの機械割を取得
+    """
+    if current_g < min(data_table.keys()):
+        return data_table[min(data_table.keys())]["機械割"]
+    
+    # キーをソートして、現在のゲーム数に最も近いものを探す
+    sorted_keys = sorted(data_table.keys())
+    for i in range(len(sorted_keys)):
+        if current_g <= sorted_keys[i]:
+            return data_table[sorted_keys[i]]["機械割"]
+    
+    return data_table[sorted_keys[-1]]["機械割"] # テーブルの最大値を超える場合
+
+
 def predict_setting(data_inputs):
     # Overall likelihoods initialized for each setting
     overall_likelihoods = {setting: 1.0 for setting in range(1, 7)}
     
-    # Check if any valid data is entered
-    if not st.session_state.event_history and data_inputs.get('total_game_count', 0) == 0:
+    # データが一つも入力されていない場合のチェック
+    if not data_inputs.get('total_game_count', 0) > 0:
         return "データが入力されていません。推測を行うには、少なくとも1つの判別要素を入力してください。"
 
-    # --- 履歴データから総合的な観測値を集計 ---
+    # --- 確率系の要素の計算 ---
     total_game_count = data_inputs.get('total_game_count', 0) # グローバル集計値
     
-    # --- 確率系の要素の計算 ---
-    # ボーナス初当り確率 (合算)
+    # ボーナス初当り確率
     if total_game_count > 0 and data_inputs.get('at_first_hit_count', 0) >= 0:
-        for setting, rate_val in GAME_DATA["ボーナス初当り確率"].items():
+        for setting, rate_val in GAME_DATA.get("ボーナス初当り確率", {}).items(): # .get()を使用
             likelihood = calculate_likelihood(data_inputs['at_first_hit_count'], total_game_count, rate_val, is_probability_rate=False)
             overall_likelihoods[setting] *= likelihood
 
     # CZ_共闘Vチャレンジ_出現率
     if data_inputs.get('cz_kyoutou_v_challenge_total_count', 0) > 0 and data_inputs.get('cz_kyoutou_v_challenge_count', 0) >= 0:
-        for setting, rate_val in GAME_DATA["CZ_共闘Vチャレンジ_出現率"].items():
+        for setting, rate_val in GAME_DATA.get("CZ_共闘Vチャレンジ_出現率", {}).items(): # .get()を使用
             likelihood = calculate_likelihood(data_inputs['cz_kyoutou_v_challenge_count'], data_inputs['cz_kyoutou_v_challenge_total_count'], rate_val, is_probability_rate=False)
             overall_likelihoods[setting] *= likelihood
             
     # ハラキリドライブ発生率
     if data_inputs.get('harikiri_drive_total_count', 0) > 0 and data_inputs.get('harikiri_drive_count', 0) >= 0:
-        for setting, rate_val in GAME_DATA["ハラキリドライブ発生率"].items():
+        for setting, rate_val in GAME_DATA.get("ハラキリドライブ発生率", {}).items(): # .get()を使用
             likelihood = calculate_likelihood(data_inputs['harikiri_drive_count'], data_inputs['harikiri_drive_total_count'], rate_val, is_probability_rate=True)
             overall_likelihoods[setting] *= likelihood
     
@@ -670,7 +613,7 @@ def predict_setting(data_inputs):
             ssr_likelihood_for_setting = 1.0
             for game_type, count in ssr_counts.items():
                 if count > 0: # 観測回数がある場合のみ尤度を計算
-                    target_rate = GAME_DATA[f"超革命ラッシュ_セットゲーム_{game_type}"][setting]
+                    target_rate = GAME_DATA.get(f"超革命ラッシュ_セットゲーム_{game_type}", {}).get(setting, 0) # .get()を使用
                     likelihood = calculate_likelihood(count, data_inputs['total_ssr_sets'], target_rate, is_probability_rate=True)
                     ssr_likelihood_for_setting *= likelihood
             overall_likelihoods[setting] *= ssr_likelihood_for_setting
@@ -678,7 +621,7 @@ def predict_setting(data_inputs):
 
     # 有利区間切断時ハラキリドライブ発生率
     if data_inputs.get('yurikuukan_cut_total_count', 0) > 0 and data_inputs.get('yurikuukan_cut_hd_count', 0) >= 0:
-        for setting, rate_val in GAME_DATA["有利区間切断時ハラキリドライブ発生率"].items():
+        for setting, rate_val in GAME_DATA.get("有利区間切断時ハラキリドライブ発生率", {}).items(): # .get()を使用
             likelihood = calculate_likelihood(data_inputs['yurikuukan_cut_hd_count'], data_inputs['yurikuukan_cut_total_count'], rate_val, is_probability_rate=True)
             overall_likelihoods[setting] *= likelihood
             
@@ -688,7 +631,7 @@ def predict_setting(data_inputs):
             mode_likelihood_for_setting = 1.0
             for mode_char, observed_count in data_inputs.get('mode_observed_counts', {}).items(): # .get()を使用
                 if observed_count > 0: # そのモードの観測があれば
-                    expected_rate = GAME_DATA[f"通常時モード比率_モード{mode_char}"][setting]
+                    expected_rate = GAME_DATA.get(f"通常時モード比率_モード{mode_char}", {}).get(setting, 0) # .get()を使用
                     # 確率の適合度を評価
                     likelihood = 1.0 - abs(observed_count / data_inputs['mode_total_count'] - expected_rate) / max(observed_count / data_inputs['mode_total_count'], expected_rate, 0.001)
                     mode_likelihood_for_setting *= (max(likelihood, 1e-5) ** 0.25) # 0.25乗で影響を弱める
@@ -698,7 +641,10 @@ def predict_setting(data_inputs):
     # 示唆系の要素の計算
     for hint_key, observed_count in data_inputs.get('hints_observed_counts', {}).items(): # .get()を使用
         if observed_count > 0:
-            hint_info = HINT_DATA[hint_key] # HINT_DATAから情報取得
+            hint_info = HINT_DATA.get(hint_key, None) # .get()を使用
+            if hint_info is None: # 示唆データが見つからない場合
+                continue
+
             hint_type = hint_info["type"]
             for setting in range(1, 7):
                 multiplier = 1.0 
@@ -747,7 +693,7 @@ def predict_setting(data_inputs):
 
     if data_inputs.get('current_sasamai', 0) <= -4000 and total_mimizu_behaviors >= 3:
         is_mimizu_confirmed = True 
-        for setting, rate in GAME_DATA["みみずモード発生率"].items():
+        for setting, rate in GAME_DATA.get("みみずモード発生率", {}).items(): # .get()を使用
             if rate > 0:
                 mimizu_likelihood_multiplier[setting] *= (rate * 100)**3 # 確定なので非常に強く反映
             else:
@@ -755,7 +701,7 @@ def predict_setting(data_inputs):
 
     elif not morning_lever_denies_mimizu_general and total_mimizu_behaviors > 0:
         # 朝一否定がなく、かつミミズ挙動が1回でもあればミミズの可能性あり
-        for setting, rate in GAME_DATA["みみずモード発生率"].items():
+        for setting, rate in GAME_DATA.get("みみずモード発生率", {}).items(): # .get()を使用
             if rate > 0:
                 mimizu_likelihood_multiplier[setting] *= (rate * 100)**(total_mimizu_behaviors * 0.5) # 挙動の回数で強度調整
             else:
@@ -856,231 +802,175 @@ st.markdown(
 with st.sidebar:
     st.markdown("## 🚀 クイックジャンプ")
     st.markdown("---")
-    # アンカーリンクが動作しない場合、st.experimental_rerun()でトップへ
-    if st.button("現在の状況へ", key="jump_current_status_sidebar"): # Key changed
-        st.write('<script>window.location.href="#section_current_status";</script>', unsafe_allow_html=True)
-    if st.button("イベント記録へ", key="jump_record_event_sidebar"): # Key changed
-        st.write('<script>window.location.href="#section_record_event";</script>', unsafe_allow_html=True)
-    if st.button("イベント履歴へ", key="jump_event_history_sidebar"): # Key changed
-        st.write('<script>window.location.href="#section_event_history";</script>', unsafe_allow_html=True)
-    if st.button("推測/やめ時へ", key="jump_results_sidebar"): # Key changed
+    if st.button("設定判別へ", key="jump_setting_sidebar"):
+        st.write('<script>window.location.href="#section_setting_inputs";</script>', unsafe_allow_html=True)
+    if st.button("みみずモードへ", key="jump_mimizu_sidebar"):
+        st.write('<script>window.location.href="#section_mimizu_inputs";</script>', unsafe_allow_html=True)
+    if st.button("やめ時判断へ", key="jump_yamedoki_sidebar"):
+        st.write('<script>window.location.href="#section_yamedoki_inputs";</script>', unsafe_allow_html=True)
+    if st.button("結果表示へ", key="jump_results_sidebar"):
         st.write('<script>window.location.href="#section_results";</script>', unsafe_allow_html=True)
     st.markdown("---")
     st.info("💡 **ヒント:** スクロールして全ての項目を確認してくださいね！")
 
 
-# Streamlit Session Stateの初期化 (初回のみ実行)
-# 全てのsession_stateキーをここで初期化し、KeyErrorを防ぐ
-if 'event_history' not in st.session_state:
-    st.session_state.event_history = [] # 記録されたイベントのリスト
+# --- 入力セクション ---
+st.header("▼データ入力▼")
+st.markdown("設定判別に影響する確率系、示唆系のデータを入力します。")
+st.markdown('<a name="section_setting_inputs"></a>', unsafe_allow_html=True) # クイックジャンプ用アンカー
 
-# グローバルカウンターの初期化 (集計用) - 存在しない場合は作成
-if 'global_counts' not in st.session_state:
-    st.session_state.global_counts = {
-        'total_game_count': 0,
-        'kakumei_bonus_count': 0,
-        'kessen_bonus_count': 0,
-        'cz_total_count': 0,
-        'cz_kyoutou_v_challenge_count': 0,
-        'cz_kyoutou_v_challenge_total_count': 0, # Vチャレンジの試行G数
-        'harikiri_drive_count': 0,
-        'harikiri_drive_total_count': 0, # ハラキリドライブの試行回数 (ATセットの合計数)
-        'total_ssr_sets': 0,
-        'ssr_10g_count': 0,
-        'ssr_20g_count': 0,
-        'ssr_50g_count': 0,
-        'ssr_100g_count': 0,
-        'yurikuukan_cut_hd_count': 0,
-        'yurikuukan_cut_total_count': 0,
-        'mode_observed_counts': {"モードA":0, "モードB":0, "モードC":0, "モードD":0}, # 各モードの出現回数
-        'mode_total_count': 0, # モード判明総回数
-        'hints_observed_counts': {hint_key: 0 for hint_key in HINT_DATA.keys()},
-        'mimizu_400_600p_rb_count': 0,
-        'mimizu_cz_blank_win_count': 0,
-        'mimizu_no_pullback_count': 0,
-        'boost_chance_bonus_count': 0, # Boost Chance経由ボーナス当選回数
-        'boost_chance_total_count': 0, # Boost Chance経由ボーナス発生総回数
-        'max_cz_pass_through_count': 0, # 最大スルー回数 (やめ時判断用)
-        'max_kessen_bonus_no_at_consecutive_count': 0, # 決戦ボーナスAT非当選連続回数最大 (やめ時判断用)
-        'morning_1g_lever_global': '不明', # 朝一1Gレバー
-        'morning_2g_lever_global': '不明', # 朝一2Gレバー
-        'current_sasamai_global': 0, # 最新の総差枚数
-        'last_at_renchan_pattern': '選択なし', # 最後のAT連荘パターン (やめ時判断用)
-        'last_bonus_at_g_count': 0, # 最後のボーナス/ATからのゲーム数 (やめ時判断用)
-    }
-
-# --- 現在の状況表示セクション ---
-st.header("▼現在の遊技状況▼")
-st.markdown("現在の遊技の累計データが表示されます。")
-st.markdown('<a name="section_current_status"></a>', unsafe_allow_html=True) # クイックジャンプ用アンカー
-with st.container(border=True):
-    col_status_1, col_status_2, col_status_3 = st.columns(3)
-    with col_status_1:
-        st.metric("総ゲーム数", f"{st.session_state.global_counts.get('total_game_count', 0)}G")
-        st.metric("ボーナス初当り", f"{st.session_state.global_counts.get('kakumei_bonus_count', 0) + st.session_state.global_counts.get('kessen_bonus_count', 0)}回")
-    with col_status_2:
-        st.metric("CZ総回数", f"{st.session_state.global_counts.get('cz_total_count', 0)}回")
-        st.metric("現在の総差枚数", f"{st.session_state.global_counts.get('current_sasamai_global', 0)}枚")
-    with col_status_3:
-        st.metric("CZスルー回数(現在)", f"{st.session_state.global_counts.get('last_cz_pass_through_count', 0)}回")
-        st.metric("決戦AT非当選連続回数(現在)", f"{st.session_state.global_counts.get('max_kessen_bonus_no_at_consecutive_count', 0)}回")
-    
+with st.container(border=True): # コンテナで囲んで視覚的にグループ化
+    st.subheader("1. 基本データ (通常時・AT合算) 🎯")
+    st.markdown("全体の遊技データと、ボーナス初当りの回数を入力します。")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        total_game_count = st.number_input("総ゲーム数", min_value=0, value=0, help="通常時とAT中の合計ゲーム数を入力します。", key="total_game_count")
+        cz_total_count = st.number_input("CZ総回数", min_value=0, value=0, help="CZに突入した合計回数を入力します。", key="cz_total_count")
+    with col2:
+        kakumei_bonus_count = st.number_input("革命ボーナス初当り回数", min_value=0, value=0, help="革命ボーナスの初当り回数を入力します。", key="kakumei_bonus_count")
+        kessen_bonus_count = st.number_input("決戦ボーナス初当り回数", min_value=0, value=0, help="決戦ボーナスの初当り回数を入力します。", key="kessen_bonus_count")
+    with col3:
+        harikiri_drive_total_count = st.number_input("ハラキリドライブ抽選総回数", min_value=0, value=0, help="ハラキリドライブ抽選の合計回数を入力します。（通常時・AT中問わず）", key="harikiri_drive_total_count")
+        harikiri_drive_count = st.number_input("ハラキリドライブ発生回数", min_value=0, value=0, key="harikiri_drive_count")
     st.markdown("---")
-    st.markdown("##### 履歴操作")
-    col_hist_action1, col_hist_action2 = st.columns(2)
-    with col_hist_action1:
-        if st.button("最新のイベントを削除", key="delete_last_event"):
-            if st.session_state.event_history:
-                deleted_event = st.session_state.event_history.pop() # 最後を削除
-                
-                # グローバルカウンターを正確に巻き戻す (イベントの逆再生)
-                st.session_state.global_counts['total_game_count'] -= deleted_event.get('game_count_since_last_hit', 0)
-                st.session_state.global_counts['cz_total_count'] -= (1 if deleted_event.get('cz_result') in ['成功', '失敗'] else 0)
-                st.session_state.global_counts['kakumei_bonus_count'] -= deleted_event.get('kakumei_bonus_count', 0) 
-                st.session_state.global_counts['kessen_bonus_count'] -= deleted_event.get('kessen_bonus_count', 0) 
-                st.session_state.global_counts['cz_kyoutou_v_challenge_count'] -= (1 if deleted_event.get('cz_type') == '共闘Vチャレンジ' else 0)
-                st.session_state.global_counts['cz_kyoutou_v_challenge_total_count'] -= deleted_event.get('game_count_since_last_hit', 0) 
-                
-                st.session_state.global_counts['harikiri_drive_count'] -= deleted_event.get('harikiri_drive_count_at', 0)
-                st.session_state.global_counts['harikiri_drive_total_count'] -= deleted_event.get('harikiri_drive_total_count_at', 0)
-                
-                total_ssr_sets_deleted = (deleted_event.get('ssr_10g_count', 0) + deleted_event.get('ssr_20g_count', 0) + deleted_event.get('ssr_50g_count', 0) + deleted_event.get('ssr_100g_count', 0))
-                st.session_state.global_counts['total_ssr_sets'] -= total_ssr_sets_deleted
-                st.session_state.global_counts['ssr_10g_count'] -= deleted_event.get('ssr_10g_count', 0)
-                st.session_state.global_counts['ssr_20g_count'] -= deleted_event.get('ssr_20g_count', 0)
-                st.session_state.global_counts['ssr_50g_count'] -= deleted_event.get('ssr_50g_count', 0)
-                st.session_state.global_counts['ssr_100g_count'] -= deleted_event.get('ssr_100g_count', 0)
-                
-                if deleted_event.get('yurikuukan_cut_event', False):
-                    st.session_state.global_counts['yurikuukan_cut_hd_count'] -= 1 
-                    st.session_state.global_counts['yurikuukan_cut_total_count'] -= 1 
 
-                if deleted_event.get('mode_current') != "不明":
-                    # モードの巻き戻しは簡易化 (正確には event_history から再集計が必要)
-                    st.session_state.global_counts['mode_observed_counts'][deleted_event['mode_current']] -= 1
-                    st.session_state.global_counts['mode_total_count'] -= 1
-                
-                # 示唆系の巻き戻し (各示唆が1回加算されていたものを減算)
-                for hint_key in HINT_DATA.keys(): # HINT_DATAの全キーをチェック
-                    event_hint_value_in_event = None # deleted_event内の対応するキーの値を取得するための変数
-                    if hint_key.startswith("CZボーナス終了画面_"): event_hint_value_in_event = deleted_event.get('cz_bonus_end_screen')
-                    elif hint_key.startswith("獲得枚数表示_"): event_hint_value_in_event = deleted_event.get('get_count_display')
-                    elif hint_key.startswith("ラウンド開始画面_"): event_hint_value_in_event = deleted_event.get('round_start_screen')
-                    elif hint_key == "有利区間切断時HD発生 (このイベントで)": event_hint_value_in_event = deleted_event.get('yurikuukan_cut_event')
+    st.subheader("2. CZ関連データ 💥")
+    col_cz_v_challenge1, col_cz_v_challenge2 = st.columns(2)
+    with col_cz_v_challenge1:
+        cz_kyoutou_v_challenge_count = st.number_input("共闘Vチャレンジ出現回数", min_value=0, value=0, key="cz_kyoutou_v_challenge_count")
+    with col_cz_v_challenge2:
+        cz_kyoutou_v_challenge_total_count = st.number_input("└ 試行G数", min_value=0, value=0, help="共闘Vチャレンジの当選分母となるゲーム数を入力します。", key="cz_kyoutou_v_challenge_total_count")
+    
+    st.subheader("3. 超革命ラッシュのセットゲーム振り分け 🚀")
+    st.markdown("超革命ラッシュで獲得したセットのゲーム数（10G/20G/50G/100G）ごとの回数を入力します。")
+    col_ssr_total = st.columns(1)
+    with col_ssr_total[0]:
+        total_ssr_sets = st.number_input("超革命ラッシュ総セット数", min_value=0, value=0, help="超革命ラッシュ中に獲得したセットの合計数を入力します。", key="total_ssr_sets")
+    col_ssr_10, col_ssr_20, col_ssr_50, col_ssr_100 = st.columns(4)
+    with col_ssr_10:
+        ssr_10g_count = st.number_input("└ 10Gセット回数", min_value=0, value=0, key="ssr_10g_count")
+    with col_ssr_20:
+        ssr_20g_count = st.number_input("└ 20Gセット回数", min_value=0, value=0, key="ssr_20g_count")
+    with col_ssr_50:
+        ssr_50g_count = st.number_input("└ 50Gセット回数", min_value=0, value=0, key="ssr_50g_count")
+    with col_ssr_100:
+        ssr_100g_count = st.number_input("└ 100Gセット回数", min_value=0, value=0, key="ssr_100g_count")
+    st.markdown("---")
 
-                    if event_hint_value_in_event is not None and event_hint_value_in_event not in ["なし", False, "不明"]: # 'なし', False, '不明' は記録されない値
-                        # 示唆名が一致する場合に減算するロジック
-                        if hint_key.replace("CZボーナス終了画面_", "") == event_hint_value_in_event: st.session_state.global_counts['hints_observed_counts'][hint_key] -= 1
-                        elif hint_key.replace("獲得枚数表示_", "") == event_hint_value_in_event: st.session_state.global_counts['hints_observed_counts'][hint_key] -= 1
-                        elif hint_key.replace("ラウンド開始画面_", "") == event_hint_value_in_event: st.session_state.global_counts['hints_observed_counts'][hint_key] -= 1
-                        elif hint_key == "有利区間切断時HD発生 (このイベントで)" and event_hint_value_in_event == True: st.session_state.global_counts['hints_observed_counts'][hint_key] -= 1 
-                
-                st.session_state.global_counts['mimizu_400_600p_rb_count'] -= deleted_event.get('mimizu_400_600p_rb_count', 0)
-                st.session_state.global_counts['mimizu_cz_blank_win_count'] -= deleted_event.get('mimizu_cz_blank_win_count', 0)
-                st.session_state.global_counts['mimizu_no_pullback_count'] -= deleted_event.get('mimizu_no_pullback_count', 0)
+    st.subheader("4. 有利区間切断時ハラキリドライブ発生状況 ⚡")
+    st.markdown("差枚+2400枚到達時にハラキリドライブが発生したか否かを入力します。")
+    col_yurikuukan_cut_total, col_yurikuukan_cut_hd = st.columns(2)
+    with col_yurikuukan_cut_total:
+        yurikuukan_cut_total_count = st.number_input("有利区間切断総回数", min_value=0, value=0, help="有利区間が切断された合計回数を入力します。", key="yurikuukan_cut_total_count")
+    with col_yurikuukan_cut_hd:
+        yurikuukan_cut_hd_count = st.number_input("有利区間切断時HD発生回数", min_value=0, value=0, key="yurikuukan_cut_hd_count")
+    st.markdown("---")
 
-                if deleted_event.get('boost_chance_bonus_type') != "不明":
-                    st.session_state.global_counts['boost_chance_total_count'] -= 1
-                    if deleted_event.get('boost_chance_bonus_type') in ["革命ボーナス", "決戦ボーナス"]:
-                        st.session_state.global_counts['boost_chance_bonus_count'] -= 1
-                
-                # やめ時関連カウンターの巻き戻しは履歴から再計算 (正確性を期す)
-                # CZスルー回数と決戦AT非当選連続回数を履歴から再計算
-                st.session_state.global_counts['last_cz_pass_through_count'] = 0
-                st.session_state.global_counts['max_kessen_bonus_no_at_consecutive_count'] = 0
-                
-                temp_cz_sl = 0
-                temp_kessen_no_at = 0
-                for history_event in st.session_state.event_history: # 削除後の履歴で再計算
-                    if history_event.get('cz_result') == '失敗':
-                        temp_cz_sl += 1
-                    elif history_event.get('cz_result') == '成功' and history_event.get('bonus_type') != 'なし':
-                        temp_cz_sl = 0 # ボーナス当選でリセット
-                    st.session_state.global_counts['last_cz_pass_through_count'] = temp_cz_sl # 最新のスルー回数を更新
+    st.subheader("5. 通常時モード比率 (現在判明しているモード) 🧭")
+    st.markdown("モード移行が判明した総回数と、各モードに滞在した回数を入力します。")
+    mode_total_count = st.number_input("モード判明総回数", min_value=0, value=0, help="モード移行が判明した合計回数を入力します。", key="mode_total_count")
+    col_mode_a, col_mode_b, col_mode_c, col_mode_d = st.columns(4)
+    with col_mode_a:
+        mode_a_count = st.number_input("└ モードA回数", min_value=0, value=0, key="mode_a_count")
+    with col_mode_b:
+        mode_b_count = st.number_input("└ モードB回数", min_value=0, value=0, key="mode_b_count")
+    with col_mode_c:
+        mode_c_count = st.number_input("└ モードC回数", min_value=0, value=0, key="mode_c_count")
+    with col_mode_d:
+        mode_d_count = st.number_input("└ モードD回数", min_value=0, value=0, key="mode_d_count")
+    st.markdown("---")
 
-                    if history_event.get('bonus_type') == '決戦ボーナス' and history_event.get('rush_entry') == '非獲得':
-                        temp_kessen_no_at += 1
-                    elif history_event.get('bonus_type') != '決戦ボーナス' and history_event.get('rush_entry') == '獲得': # 決戦ボーナス以外でAT獲得したらリセット
-                        temp_kessen_no_at = 0
-                    st.session_state.global_counts['max_kessen_bonus_no_at_consecutive_count'] = max(st.session_state.global_counts['max_kessen_bonus_no_at_consecutive_count'], temp_kessen_no_at)
+    st.subheader("6. 示唆系の出現回数 🔔")
+    st.markdown("各示唆が出現した回数を入力してください。")
+    
+    st.markdown("##### CZ/ボーナス終了画面")
+    col_czb_end1, col_czb_end2, col_czb_end3 = st.columns(3)
+    with col_czb_end1:
+        czb_end_shiro1_count = st.number_input("白枠1(2人)", min_value=0, value=0, key="czb_end_shiro1_count")
+        czb_end_aka1_count = st.number_input("赤枠1(男性キャラ)", min_value=0, value=0, key="czb_end_aka1_count")
+        czb_end_kanemaru_count = st.number_input("金枠(ドルシア軍服)", min_value=0, value=0, key="czb_end_kanemaru_count")
+    with col_czb_end2:
+        czb_end_shiro2_count = st.number_input("白枠2(3人)", min_value=0, value=0, key="czb_end_shiro2_count")
+        czb_end_aka2_count = st.number_input("赤枠2(水着)", min_value=0, value=0, key="czb_end_aka2_count")
+        czb_end_niji_count = st.number_input("虹枠(咲)", min_value=0, value=0, key="czb_end_niji_count")
+    with col_czb_end3:
+        czb_end_shiro3_count = st.number_input("白枠3(4人)", min_value=0, value=0, key="czb_end_shiro3_count")
+        czb_end_kakumei_count = st.number_input("革命ボーナス後", min_value=0, value=0, key="czb_end_kakumei_count")
+    
+    st.markdown("##### 獲得枚数表示")
+    col_get_count1, col_get_count2, col_get_count3 = st.columns(3)
+    with col_get_count1:
+        get_count_456_count = st.number_input("456枚OVER", min_value=0, value=0, key="get_count_456_count")
+    with col_get_count2:
+        get_count_555_count = st.number_input("555枚OVER", min_value=0, value=0, key="get_count_555_count")
+    with col_get_count3:
+        get_count_666_count = st.number_input("666枚OVER", min_value=0, value=0, key="get_count_666_count")
 
-                # 最後のAT連荘パターン、最後のボーナス/ATからのG数も再計算 (履歴の最後から取得)
-                st.session_state.global_counts['last_at_renchan_pattern'] = '選択なし' 
-                st.session_state.global_counts['last_bonus_at_g_count'] = 0 
-                if st.session_state.event_history:
-                    last_event_after_delete = st.session_state.event_history[-1]
-                    st.session_state.global_counts['last_bonus_at_g_count'] = last_event_after_delete.get('game_count_since_last_hit', 0)
-                    if last_event_after_delete.get('rush_entry') == '獲得':
-                        total_ssr_sets_last_event = (last_event_after_delete.get('ssr_10g_count', 0) + last_event_after_delete.get('ssr_20g_count', 0) + last_event_after_delete.get('ssr_50g_count', 0) + last_event_after_delete.get('ssr_100g_count', 0))
-                        if total_ssr_sets_last_event == 1: st.session_state.global_counts['last_at_renchan_pattern'] = "単発後"
-                        elif total_ssr_sets_last_event == 2: st.session_state.global_counts['last_at_renchan_pattern'] = "2連後"
-                        elif total_ssr_sets_last_event == 3: st.session_state.global_counts['last_at_renchan_pattern'] = "3連後"
-                        elif last_event_after_delete.get('rush_superior_entry') == "上位AT突入": st.session_state.global_counts['last_at_renchan_pattern'] = "超革命後"
-                        else: st.session_state.global_counts['last_at_renchan_pattern'] = "単発後"
-                    elif last_event_after_delete.get('bonus_type') != 'なし' and last_event_after_delete.get('rush_entry') == '非獲得':
-                        st.session_state.global_counts['last_at_renchan_pattern'] = "単発後"
-                    
-                st.info("最新のイベントを削除しました。")
-                st.experimental_rerun()
-            else:
-                st.warning("削除できるイベントがありません。")
-    with col_hist_action2:
-        if st.button("全データリセット", type="secondary", key="clear_all_events"): # リセットボタンを少し目立たなく
-            # session_state全体をクリア
-            for key in st.session_state.keys():
-                del st.session_state[key]
-            st.experimental_rerun() # 画面をリロードしてリセットを適用
-
+    st.markdown("##### ラウンド開始画面")
+    col_round_start1, col_round_start2 = st.columns(2)
+    with col_round_start1:
+        round_start_beast_count = st.number_input("ビーストハイ", min_value=0, value=0, key="round_start_beast_count")
+    with col_round_start2:
+        round_start_liese_count = st.number_input("リーゼロッテ", min_value=0, value=0, key="round_start_liese_count")
 st.markdown("---")
 
-# --- みみずモード判別セクション (グローバルカウンター使用) ---
+
+# --- みみずモード判別セクション ---
 st.header("▼みみずモード判別▼")
-st.markdown("記録されたイベントから集計された情報で、ミミズモードの可能性を判断します。")
-st.markdown('<a name="section_mimizu_check"></a>', unsafe_allow_html=True) # クイックジャンプ用アンカー
+st.markdown("ミミズモードの可能性を判断するための情報を入力します。")
+st.markdown('<a name="section_mimizu_inputs"></a>', unsafe_allow_html=True) # クイックジャンプ用アンカー
 with st.container(border=True):
-    st.markdown("##### 3-1. 朝一1G/2Gレバーオン時の状況")
-    if st.session_state.global_counts.get('morning_1g_lever_global', '不明') == '不明': # まだ入力されていなければ表示
-        st.info("朝一のレバーオン状況はイベント記録時に最初の一度のみ入力可能です。")
+    st.markdown("##### 7-1. 朝一1G/2Gレバーオン時の状況")
+    morning_1g_lever = st.selectbox("朝一1G目レバー", ["不明", "リプレイ"] + RARE_ROLES + OTHER_ROLES, key="morning_1g_lever")
+    if morning_1g_lever == "リプレイ":
+        morning_2g_lever = st.selectbox("└ 2G目レバー", ["不明"] + RARE_ROLES + OTHER_ROLES, key="morning_2g_lever")
     else:
-        st.write(f"1G目レバー: **{st.session_state.global_counts.get('morning_1g_lever_global', '不明')}**")
-        if st.session_state.global_counts.get('morning_1g_lever_global', '不明') == "リプレイ":
-            st.write(f"└ 2G目レバー: **{st.session_state.global_counts.get('morning_2g_lever_global', '不明')}**")
-    
-    st.markdown("##### 3-2. 現在の総差枚数")
-    st.metric("現在の総差枚数", f"{st.session_state.global_counts.get('current_sasamai_global', 0)}枚", help="イベント記録時に最新の差枚数が更新されます。")
-    
-    st.markdown("##### 3-3. みみず挙動カウンター (累計)")
-    col_mimizu_agg1, col_mimizu_agg2, col_mimizu_agg3 = st.columns(3)
-    with col_mimizu_agg1:
-        st.metric("400-600P 革命ボーナス当選", f"{st.session_state.global_counts.get('mimizu_400_600p_rb_count', 0)}回")
-    with col_mimizu_agg2:
-        st.metric("CZ中ハズレ当選", f"{st.session_state.global_counts.get('mimizu_cz_blank_win_count', 0)}回")
-    with col_mimizu_agg3:
-        st.metric("引き戻しなし", f"{st.session_state.global_counts.get('mimizu_no_pullback_count', 0)}回")
+        morning_2g_lever = "N/A"
+        st.markdown("_(1G目がリプレイの場合のみ2G目を参照)_")
+
+    st.markdown("##### 7-2. 現在の総差枚数")
+    current_sasamai = st.number_input("現在の総差枚数 (プラス/マイナス)", min_value=-100000, value=0, step=100, help="プラスなら正の数、マイナスなら負の数で入力 (-4000枚で下限ミミズの可能性)", key="current_sasamai")
+
+    st.markdown("##### 7-3. みみず挙動カウンター (複数回の発生で濃厚度UP)")
+    col_mimizu_count1, col_mimizu_count2, col_mimizu_count3 = st.columns(3)
+    with col_mimizu_count1:
+        mimizu_400_600p_rb_count = st.number_input("400-600P 革命ボーナス当選", min_value=0, value=0, help="400-600Pで革命ボーナスに当選した回数", key="mimizu_400_600p_rb_count")
+    with col_mimizu_count2:
+        mimizu_cz_blank_win_count = st.number_input("CZ中ハズレ当選", min_value=0, value=0, help="CZ中、何も引かずに当選した回数", key="mimizu_cz_blank_win_count")
+    with col_mimizu_count3:
+        mimizu_no_pullback_count = st.number_input("引き戻しなし", min_value=0, value=0, help="ボーナス/AT終了後、引き戻しゾーン（0-66G）で何も起こらなかった回数", key="mimizu_no_pullback_count")
     
 st.markdown("---")
 
-# --- やめ時判断セクション (グローバルカウンター使用) ---
+# --- やめ時判断セクション ---
 st.header("▼やめ時判断▼")
 st.markdown("現在の遊技状況と期待値から、やめ時を判断します。")
-st.markdown('<a name="section_yamedoki_check"></a>', unsafe_allow_html=True) # クイックジャンプ用アンカー
+st.markdown('<a name="section_yamedoki_inputs"></a>', unsafe_allow_html=True) # クイックジャンプ用アンカー
 with st.container(border=True):
-    st.markdown("##### 4-1. 現在の遊技状況 (累計データから判断)")
-    st.markdown(f"最後のボーナス/ATからのG数: **{st.session_state.global_counts.get('last_bonus_at_g_count', 0)}G**")
-    st.markdown(f"CZスルー回数: **{st.session_state.global_counts.get('last_cz_pass_through_count', 0)}回**")
-    st.markdown(f"決戦ボーナスAT非当選連続回数: **{st.session_state.global_counts.get('max_kessen_bonus_no_at_consecutive_count', 0)}回**")
-    st.markdown(f"最後のAT終了パターン: **{st.session_state.global_counts.get('last_at_renchan_pattern', '選択なし')}**")
+    st.markdown("##### 8-1. 現在の遊技状況入力")
+    col_yame1, col_yame2, col_yame3 = st.columns(3)
+    with col_yame1:
+        current_g_for_yame = st.number_input("ボーナス/AT間G数", min_value=0, value=0, help="最後のボーナス/ATからのゲーム数", key="current_g_for_yame")
+    with col_yame2:
+        cz_pass_through_count_for_yame = st.number_input("CZスルー回数", min_value=0, value=0, key="cz_pass_through_count_for_yame")
+    with col_yame3:
+        kessen_bonus_no_at_consecutive_count_for_yame = st.number_input("決戦ボーナスAT非当選連続回数", min_value=0, value=0, help="AT非当選の決戦ボーナスが連続した回数", key="kessen_bonus_no_at_consecutive_count_for_yame")
     
-    st.markdown("##### 4-2. 特定のボーナス契機 (累計)")
-    st.markdown(f"Boost Chance経由ボーナス回数: **{st.session_state.global_counts.get('boost_chance_bonus_count', 0)}回**")
-    st.markdown(f"Boost Chance経由ボーナス発生総回数: **{st.session_state.global_counts.get('boost_chance_total_count', 0)}回**")
-    
+    at_renchan_pattern_for_yame = st.selectbox("最後のAT終了パターン", ["選択なし", "単発後", "2連後", "3連後", "超革命後"], key="at_renchan_pattern_for_yame")
+
+    st.markdown("##### 8-2. 特定のボーナス契機")
+    col_boost_total, col_boost_bonus = st.columns(2)
+    with col_boost_total:
+        boost_chance_total_count_for_yame = st.number_input("Boost Chance経由ボーナス発生総回数", min_value=0, value=0, help="Boost Chance経由でボーナスに当選した回数", key="boost_chance_total_count_for_yame")
+    with col_boost_bonus:
+        boost_chance_bonus_count_for_yame = st.number_input("Boost Chance経由ボーナス当選回数", min_value=0, value=0, key="boost_chance_bonus_count_for_yame")
+
 st.markdown("---")
 
 
 # --- 推測実行ボタン ---
 st.subheader("▼結果表示▼")
-st.markdown("全てのデータ入力・記録が終わったら、以下のボタンをクリックしてください。")
+st.markdown("全てのデータ入力が終わったら、以下のボタンをクリックしてください。")
 st.markdown('<a name="section_results"></a>', unsafe_allow_html=True) # クイックジャンプ用アンカー
 result_button_clicked = st.button("✨ 推測結果を表示 ✨", type="primary")
 
@@ -1117,45 +1007,60 @@ if result_button_clicked:
             unsafe_allow_html=True
         )
 
-        # predict_setting関数に渡す入力データをグローバルカウンターから集計
+        # predict_setting関数に渡す入力データを収集
         user_inputs_for_prediction = {
-            'total_game_count': st.session_state.global_counts.get('total_game_count', 0),
-            'kakumei_bonus_count': st.session_state.global_counts.get('kakumei_bonus_count', 0),
-            'kessen_bonus_count': st.session_state.global_counts.get('kessen_bonus_count', 0),
-            'at_first_hit_count': st.session_state.global_counts.get('kakumei_bonus_count', 0) + st.session_state.global_counts.get('kessen_bonus_count', 0), # ボーナス初当り合計
-            'cz_total_count': st.session_state.global_counts.get('cz_total_count', 0),
-            'cz_kyoutou_v_challenge_count': st.session_state.global_counts.get('cz_kyoutou_v_challenge_count', 0),
-            'cz_kyoutou_v_challenge_total_count': st.session_state.global_counts.get('cz_kyoutou_v_challenge_total_count', 0),
-            'harikiri_drive_count': st.session_state.global_counts.get('harikiri_drive_count', 0),
-            'harikiri_drive_total_count': st.session_state.global_counts.get('harikiri_drive_total_count', 0),
-            'total_ssr_sets': st.session_state.global_counts.get('total_ssr_sets', 0),
-            'ssr_10g_count': st.session_state.global_counts.get('ssr_10g_count', 0),
-            'ssr_20g_count': st.session_state.global_counts.get('ssr_20g_count', 0),
-            'ssr_50g_count': st.session_state.global_counts.get('ssr_50g_count', 0),
-            'ssr_100g_count': st.session_state.global_counts.get('ssr_100g_count', 0),
-            'yurikuukan_cut_hd_count': st.session_state.global_counts.get('yurikuukan_cut_hd_count', 0),
-            'yurikuukan_cut_total_count': st.session_state.global_counts.get('yurikuukan_cut_total_count', 0),
-            'mode_observed_counts': st.session_state.global_counts.get('mode_observed_counts', {"モードA":0, "モードB":0, "モードC":0, "モードD":0}),
-            'mode_total_count': st.session_state.global_counts.get('mode_total_count', 0),
-            'hints_observed_counts': st.session_state.global_counts.get('hints_observed_counts', {hint_key: 0 for hint_key in HINT_DATA.keys()}),
-            'mimizu_400_600p_rb_count': st.session_state.global_counts.get('mimizu_400_600p_rb_count', 0),
-            'mimizu_cz_blank_win_count': st.session_state.global_counts.get('mimizu_cz_blank_win_count', 0),
-            'mimizu_no_pullback_count': st.session_state.global_counts.get('mimizu_no_pullback_count', 0),
-            'morning_1g_lever': st.session_state.global_counts.get('morning_1g_lever_global', '不明'),
-            'morning_2g_lever': st.session_state.global_counts.get('morning_2g_lever_global', '不明'),
-            'current_sasamai': st.session_state.global_counts.get('current_sasamai_global', 0),
-            'cz_pass_through_count_for_yame': st.session_state.global_counts.get('last_cz_pass_through_count', 0),
-            'kessen_bonus_no_at_consecutive_count': st.session_state.global_counts.get('max_kessen_bonus_no_at_consecutive_count', 0),
-            'total_game_count_for_yame': st.session_state.global_counts.get('total_game_count', 0), # やめ時判断用G数は総ゲーム数を使用
-            'at_renchan_pattern_for_yame': st.session_state.global_counts.get('last_at_renchan_pattern', '選択なし'),
-            'current_g_after_at_for_yame': st.session_state.global_counts.get('last_bonus_at_g_count', 0), # 最後の当たりからのG数を使用
+            'total_game_count': total_game_count,
+            'kakumei_bonus_count': kakumei_bonus_count,
+            'kessen_bonus_count': kessen_bonus_count,
+            'at_first_hit_count': kakumei_bonus_count + kessen_bonus_count, # ボーナス初当り合計
+            'cz_total_count': cz_total_count,
+            'cz_kyoutou_v_challenge_count': cz_kyoutou_v_challenge_count,
+            'cz_kyoutou_v_challenge_total_count': cz_kyoutou_v_challenge_total_count,
+            'harikiri_drive_count': harikiri_drive_count,
+            'harikiri_drive_total_count': harikiri_drive_total_count,
+            'total_ssr_sets': total_ssr_sets,
+            'ssr_10g_count': ssr_10g_count,
+            'ssr_20g_count': ssr_20g_count,
+            'ssr_50g_count': ssr_50g_count,
+            'ssr_100g_count': ssr_100g_count,
+            'yurikuukan_cut_hd_count': yurikuukan_cut_hd_count,
+            'yurikuukan_cut_total_count': yurikuukan_cut_total_count,
+            'mode_observed_counts': {'モードA': mode_a_count, 'モードB': mode_b_count, 'モードC': mode_c_count, 'モードD': mode_d_count},
+            'mode_total_count': mode_total_count,
+            'hints_observed_counts': {
+                "CZボーナス終了画面_白枠1(2人)": czb_end_shiro1_count,
+                "CZボーナス終了画面_白枠2(3人)": czb_end_shiro2_count,
+                "CZボーナス終了画面_白枠3(4人)": czb_end_shiro3_count,
+                "CZボーナス終了画面_革命ボーナス後": czb_end_kakumei_count,
+                "CZボーナス終了画面_赤枠1(男性キャラ集合)": czb_end_aka1_count,
+                "CZボーナス終了画面_赤枠2(水着)": czb_end_aka2_count,
+                "CZボーナス終了画面_金枠(ドルシア軍服)": czb_end_kanemaru_count,
+                "CZボーナス終了画面_虹枠(咲)": czb_end_niji_count,
+                "獲得枚数表示_456枚OVER": get_count_456_count,
+                "獲得枚数表示_555枚OVER": get_count_555_count,
+                "獲得枚数表示_666枚OVER": get_count_666_count,
+                "ラウンド開始画面_ビーストハイ": round_start_beast_count,
+                "ラウンド開始画面_リーゼロッテ": round_start_liese_count,
+            },
+            'mimizu_400_600p_rb_count': mimizu_400_600p_rb_count,
+            'mimizu_cz_blank_win_count': mimizu_cz_blank_win_count,
+            'mimizu_no_pullback_count': mimizu_no_pullback_count,
+            'morning_1g_lever_global': morning_1g_lever, # UI入力値
+            'morning_2g_lever_global': morning_2g_lever, # UI入力値
+            'current_sasamai': current_sasamai, # UI入力値
+            'cz_pass_through_count_for_yame': cz_pass_through_count_for_yame, # UI入力値
+            'kessen_bonus_no_at_consecutive_count': kessen_bonus_no_at_consecutive_count_for_yame, # UI入力値
+            'total_game_count_for_yame': current_g_for_yame, # UI入力値
+            'at_renchan_pattern_for_yame': at_renchan_pattern_for_yame, # UI入力値
+            'boost_chance_total_count': boost_chance_total_count_for_yame, # UI入力値
+            'boost_chance_bonus_count': boost_chance_bonus_count_for_yame, # UI入力値
+            'current_g_after_at_for_yame': st.session_state.get('last_bonus_at_g_count_display', 0), # やめ時判断用
         }
         
         result_content = predict_setting(user_inputs_for_prediction)
         st.markdown(result_content)
 
-# ボタンが押されていない状態に戻った場合、脳汁演出を非表示に
-if not result_button_clicked:
-    if st.session_state.get('show_harikiri_background', False):
-        st.session_state.show_harikiri_background = False
-        # st.experimental_rerun() はユーザーの操作を妨げる可能性があるので、基本はコメントアウト
+# 結果表示ボタンが押されていない状態に戻った場合、脳汁演出を非表示に
+if not result_button_clicked and st.session_state.get('show_harikiri_background', False):
+    st.session_state.show_harikiri_background = False
+    # st.experimental_rerun() はユーザーの操作を妨げる可能性があるので、コメントアウト
