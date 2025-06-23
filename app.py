@@ -256,7 +256,7 @@ with st.container(border=True): # コンテナで囲んで視覚的にグルー�
     st.markdown("---")
 
     st.subheader("4. 有利区間切断時ハラキリドライブ発生状況 ⚡")
-    st.markdown("差枚+2400枚到達時にハラキリドライブが発生したか否かを入力します。")
+    st.markdown("超革命ラッシュ時の差枚+1000枚到達時にハラキリドライブが発生したか否かを入力します。")
     col_yurikuukan_cut_total, col_yurikuukan_cut_hd = st.columns(2)
     with col_yurikuukan_cut_total:
         yurikuukan_cut_total_count = st.number_input("有利区間切断総回数", min_value=0, value=0, help="有利区間が切断された合計回数を入力します。", key="yurikuukan_cut_total_count")
